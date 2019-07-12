@@ -1,5 +1,5 @@
 package ciudad
 
-class TipoVia(nombre:String) {
+class TipoVia(val nombre:String) {
   
 }

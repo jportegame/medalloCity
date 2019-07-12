@@ -1,5 +1,7 @@
 package inmovil
 
-class Angulo(var valor:Double) {
+class Angulo(var _valor:Double) {
+  def valor = _valor
+  def valor_=(valor: Double) = _valor = valor
   
 }

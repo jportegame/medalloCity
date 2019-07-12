@@ -1,5 +1,5 @@
 package ciudad
 import inmovil.Punto
-class Interseccion(xi : Int, yi:Int, nombre:String = "") extends Punto(xi,yi) {
+class Interseccion(val xi : Int, val yi:Int, val nombre:String = "") extends Punto(xi,yi) {
   
 }

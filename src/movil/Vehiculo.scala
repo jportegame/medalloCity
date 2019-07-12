@@ -1,5 +1,5 @@
 package movil
 import inmovil._
-class Vehiculo(var pos:Punto, var vel : Velocidad, var placa:String) extends Movil(pos,vel) with MovimientoUniforme {
+class Vehiculo(val pos:Punto, val vel : Velocidad, val placa:String) extends Movil(pos,vel) with MovimientoUniforme {
   
 }

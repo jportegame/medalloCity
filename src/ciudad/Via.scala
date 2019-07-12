@@ -1,7 +1,7 @@
 package ciudad
 import inmovil._
 
-class Via (var origen:Interseccion , var fin:Interseccion, var velMaxima:Double , var tipoVia:TipoVia , var numero:Int, var sentido:Sentido ) extends Recta{
+class Via (val origen:Interseccion , val fin:Interseccion, val velMaxima:Double , val tipoVia:TipoVia , val numero:Int, val sentido:Sentido ) extends Recta{
   type T = Interseccion
   
  
