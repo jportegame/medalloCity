@@ -1,5 +1,5 @@
 package movil
 import inmovil._
-class MotoTaxi (var pos:Punto, var vel : Velocidad, var pla:String) extends Vehiculo(pos,vel,pla){
+class MotoTaxi(val p:Punto, val v : Velocidad, val pla:String) extends Vehiculo(p,v,pla){
   
 }
