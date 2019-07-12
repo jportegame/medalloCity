@@ -6,10 +6,10 @@ object Simulacion extends Runnable {
   var t:Double = 0
   var dt:Double = 0
   var tRefresh = 0
-  val minVeh = 0
-  val maxVeh = 0
-  val minVel = 0
-  val maxVel = 0
+  val minVehiculos = 0
+  val maxVehiculos = 0
+  val minVelocidad = 0
+  val maxVelocidad = 0
   
   
   var listaVehiculos = ArrayBuffer.empty[Vehiculo]
