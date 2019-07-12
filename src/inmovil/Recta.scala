@@ -2,7 +2,7 @@ package inmovil
 
 trait Recta {
   type T<: Punto
-  var origen:T
-  var fin:T
+  val origen:T
+  val fin:T
 
 }
