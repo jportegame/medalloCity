@@ -11,10 +11,10 @@ class Sentido(){
 }
 
 object Sentido{
-  def unSentido():Sentido = {
+  def unaVia:Sentido = {
     new Sentido("Un sentido")
   }
-  def dobleVia():Sentido = {
+  def dobleVia:Sentido = {
     new Sentido("Doble via")
   }
 }

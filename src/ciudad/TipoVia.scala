@@ -1,5 +1,5 @@
 package ciudad
 
-class TipoVia(val nombre:String) {
+case class TipoVia(val nombre:String) {
   
 }
