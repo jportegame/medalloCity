@@ -1,25 +1,29 @@
 package inmovil
-import scalax.collection.Graph
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge._
 import scalax.collection.edge.WLDiEdge
 import ciudad.Interseccion
 import ciudad.Via
 import ciudad.Sentido
 import scala.collection.mutable.ArrayBuffer
+import scalax.collection.mutable.Graph
 
 object GrafoVias {
-  var g = Graph[Interseccion, WLDiEdge]()
+  val g = Graph[Interseccion, WLDiEdge]()
+  
+  def n(outer: Interseccion):g.NodeT = g.get(outer)
+
   def construir(vias: ArrayBuffer[Via]):Unit = {
     vias.foreach(x=> {
       if((x.sentido.nombre).equalsIgnoreCase("Un Sentido")){
-        g = (g + WLDiEdge(x.origen, x.fin)(x.distancia,x))
+        (g += WLDiEdge(x.origen, x.fin)(x.distancia,x))
       }else{
-        g = (g + WLDiEdge(x.origen, x.fin)(x.distancia,x))
-        g = (g + WLDiEdge(x.fin, x.origen)(x.distancia,x))
+        (g += WLDiEdge(x.origen, x.fin)(x.distancia,x))
+        (g += WLDiEdge(x.fin, x.origen)(x.distancia,x))
       }
+      
     })
     
-
     
   }
+    
 }

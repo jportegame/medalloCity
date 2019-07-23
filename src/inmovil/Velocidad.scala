@@ -18,4 +18,6 @@ object Velocidad{
     val metroSeg:Double = kmHor*(1000/3600)
     metroSeg
   }
+  
+  
 }

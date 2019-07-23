@@ -9,12 +9,16 @@ object Simulacion extends Runnable {
   var tRefresh = 0
   val minVehiculos = 0
   val maxVehiculos = 0
-  val minVelocidad = 0
-  val maxVelocidad = 0
+  val minVelocidad:Double = 0
+  val maxVelocidad:Double = 0
+  
+  
   
   
   var listaVehiculos = ArrayBuffer.empty[Vehiculo]
   var listaVias = ArrayBuffer.empty[Via]
+  
+  
 
   //var hilo: Thread = _
   
@@ -141,8 +145,7 @@ object Simulacion extends Runnable {
   def run() {
     Simulacion.cargar()
     println("Hola")
-    println(grafo.g.nodes.mkString(" | "))
-    println(grafo.g.edges.mkString(" , "))
+    Vehiculo.apply()
 
   }
   

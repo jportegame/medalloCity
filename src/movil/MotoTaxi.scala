@@ -1,5 +1,7 @@
 package movil
 import inmovil._
-class MotoTaxi(val p:Punto, val v : Velocidad, val pla:String) extends Vehiculo(p,v,pla){
+import scala.collection.mutable.Queue
+import ciudad.Via
+class MotoTaxi(p:Punto, v : Velocidad, pla:String, r:Queue[Via]) extends Vehiculo(p,v,pla,r){
   
 }
