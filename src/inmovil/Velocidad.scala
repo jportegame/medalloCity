@@ -10,14 +10,13 @@ class Velocidad (private var _magnitud:Double ,private var _direccion:Angulo) {
 
 object Velocidad{
   def conversorMetroSegAKmHor(metroSeg : Double):Double ={
-    val KmHor:Double = metroSeg*(3600/1000)
+    val KmHor:Double = metroSeg*(3.6)
     KmHor
   }
   
   def conversorKmHorAMetroSeg(kmHor : Double):Double ={
-    val metroSeg:Double = kmHor*(1000/3600)
+    val metroSeg:Double = kmHor*(1/3.6)
     metroSeg
   }
-  
   
 }

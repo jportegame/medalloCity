@@ -9,6 +9,7 @@ import scalax.collection.mutable.Graph
 
 object GrafoVias {
   val g = Graph[Interseccion, WLDiEdge]()
+  val listaDeNodos = new ArrayBuffer[Interseccion]()
   
   def n(outer: Interseccion):g.NodeT = g.get(outer)
 
@@ -23,6 +24,7 @@ object GrafoVias {
       
     })
     
+    g.nodes.foreach(x=> listaDeNodos+= x.value)
     
   }
     
