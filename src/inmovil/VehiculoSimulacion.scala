@@ -61,7 +61,6 @@ object VehiculoSimulacion {
     val viasRecorrido = VehiculoSimulacion.toQueue(camino.get.edges.map(_.label.asInstanceOf[Via]).toList)
     val viaInicial = viasRecorrido.head
     var magnitudVelocidadAleatoria = (r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad
-
     println("Velocidad incial 1:" + magnitudVelocidadAleatoria) //Borrar
     if (magnitudVelocidadAleatoria > viaInicial.velMaxima) {
       magnitudVelocidadAleatoria = viaInicial.velMaxima

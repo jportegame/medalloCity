@@ -166,7 +166,7 @@ object Simulacion extends Runnable {
     // Prepruebas visuales que deben ser borradas-fin
 
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
-      //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion]
+      //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -inicio
       println("t: " + Simulacion.t)
       println("Interseccion destino: " + vehiculoSimulacion.interseccionDestino)
       println("angulo:" + vehiculoSimulacion.vehiculo.velocidad.direccion.valor)
@@ -174,7 +174,7 @@ object Simulacion extends Runnable {
       println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.sentidoY * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
       vehiculoSimulacion.mover(Simulacion.dt)
       println(vehiculoSimulacion.vehiculo.posicion)
-      //fin pruebas visuales
+      //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -fin
       
       
       Simulacion.t += Simulacion.dt

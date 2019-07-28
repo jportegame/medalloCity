@@ -19,9 +19,9 @@ case class Vehiculo(var placa:String = "")(pos: Punto, vel: Velocidad) extends M
 }
 
 object Vehiculo {
-
+  
   val setVehiculos:Set[Vehiculo] = Set()
-
+  
   val pCarros = 0.4
   val pMotos = 0.3 + pCarros
   val pBuses = 0.15 + pMotos
@@ -31,7 +31,6 @@ object Vehiculo {
   def apply(pos: Punto, vel: Velocidad): Vehiculo = {
     val r = new scala.util.Random
     val numeroAleatorio = r.nextDouble()
-    
 
     if (numeroAleatorio <= pCarros) {
       return new Carro(pos, vel)
@@ -47,12 +46,9 @@ object Vehiculo {
 
     } else {
       return new MotoTaxi(pos, vel)
-      
-
     }
 
   }
-
 
 
 }
