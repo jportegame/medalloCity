@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val interseccionesRecorrido: Queue[Interseccion]) {
   VehiculoSimulacion.listaDeVehiculosSimulacion += this
-  
+
   private var _viaActual: Via = recorrido.dequeue()
   private var _interseccionDestino: Interseccion = interseccionesRecorrido.dequeue()
 
@@ -36,7 +36,7 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
           vehiculo.velocidad.anguloYSentidoEntreDosPuntos(vehiculo.posicion, this.interseccionDestino)
         } else {
           vehiculo.detenido = true
-          VehiculoSimulacion.listaDeVehiculosSimulacion.-(this)
+          VehiculoSimulacion.listaDeVehiculosSimulacion.-=(this)
         }
       }
     }
@@ -44,10 +44,10 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
 }
 
 object VehiculoSimulacion {
-  
-  val listaDeVehiculosSimulacion = new ArrayBuffer[VehiculoSimulacion] 
 
-  def apply():VehiculoSimulacion ={
+  val listaDeVehiculosSimulacion = new ArrayBuffer[VehiculoSimulacion]
+
+  def apply(): VehiculoSimulacion = {
     val r = new scala.util.Random
     val origen: Interseccion = GrafoVias.listaDeNodos(r.nextInt(GrafoVias.listaDeNodos.length))
     var destino: Interseccion = GrafoVias.listaDeNodos(r.nextInt(GrafoVias.listaDeNodos.length))
@@ -78,8 +78,8 @@ object VehiculoSimulacion {
     interseccionesRecorrido.dequeue()
     val interseccionInicial = interseccionesRecorrido.head
     val puntoOrigen = new Punto(origen.x, origen.y)
-    
-    val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen,Velocidad(magnitudVelocidadAleatoria)(Angulo(0))),viasRecorrido,interseccionesRecorrido)
+
+    val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido)
     vehiculoDeSimulacion.vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
     return vehiculoDeSimulacion
   }
@@ -87,8 +87,7 @@ object VehiculoSimulacion {
   def toQueue[T](L: List[T]): Queue[T] = {
     val Q = new Queue[T]();
     L.foreach(f => Q += f)
-    Q
-
+    return Q
   }
 
 }

@@ -6,16 +6,17 @@ object Simulacion extends Runnable {
   val grafo = GrafoVias
   var t: Double = 0
   var dt: Double = 1
-  var tRefresh = 0
+  val tRefresh = 1  
   val minVehiculos = 1
   val maxVehiculos = 1
   val minVelocidad: Double = 30
   val maxVelocidad: Double = 70
+  val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
-  var listaVehiculos = ArrayBuffer.empty[Vehiculo]
   var listaVias = ArrayBuffer.empty[Via]
+  val listaIntersecciones = GrafoVias.listaDeNodos
 
-  //var hilo: Thread = _
+  
 
   def cargar() {
 
@@ -133,16 +134,21 @@ object Simulacion extends Runnable {
       new Via(agua, santafe, 60, TipoVia("Calle"), Sentido.dobleVia, "12S", "80"),
       new Via(viva, pqEnv, 60, TipoVia("Calle"), Sentido.dobleVia, "37S", "37S"),
       new Via(viva, gu_37S, 60, TipoVia("Calle"), Sentido.dobleVia, "63", "37S"))
-    listaVias = vias
-    grafo.construir(vias)
+      listaVias = vias
+      grafo.construir(vias)
+  
+      for (i <- 0 until Simulacion.totalVehiculos) {
+        VehiculoSimulacion.apply()
+      }
+      println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
 
   }
   def run() {
     Simulacion.cargar()
-    println("Hola")
-
-    val vehiculoSimulacion = VehiculoSimulacion.apply()
+    // Prepruebas visuales que deben ser borradas-inicio
     
+    val vehiculoSimulacion = VehiculoSimulacion.listaDeVehiculosSimulacion(0)
+
     val dequeInterseccion = vehiculoSimulacion.interseccionesRecorrido
     val dequeVias = vehiculoSimulacion.recorrido
 
@@ -157,20 +163,33 @@ object Simulacion extends Runnable {
 
     })
 
-    while (!vehiculoSimulacion.vehiculo.detenido) {
+    // Prepruebas visuales que deben ser borradas-fin
+
+    while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
+      //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion]
       println("t: " + Simulacion.t)
       println("Interseccion destino: " + vehiculoSimulacion.interseccionDestino)
       println("angulo:" + vehiculoSimulacion.vehiculo.velocidad.direccion.valor)
-      println("Componente velocidad X:" + vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.cos(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
-      println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
+      println("Componente velocidad X:" + vehiculoSimulacion.vehiculo.velocidad.sentidoX * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.cos(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
+      println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.sentidoY * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
       vehiculoSimulacion.mover(Simulacion.dt)
       println(vehiculoSimulacion.vehiculo.posicion)
+      //fin pruebas visuales
+      
+      
       Simulacion.t += Simulacion.dt
+      
+      
+      //funcion de pajoy que recoje los datos desde la misma lista de [VehiculoSimulacion]
+      
+      
+      Thread.sleep(tRefresh*1000)
     }
-
-    
-    println("Intersecciones: "+ dequeInterseccion)
+    // Postpruebas visuales que deben ser borradas-inicio
+    println("Intersecciones: " + dequeInterseccion)
     println("Vias: " + dequeVias)
+    // Postpruebas visuales que deben ser borradas-fin 
+
   }
 
 }
