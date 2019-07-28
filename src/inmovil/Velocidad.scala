@@ -1,6 +1,6 @@
 package inmovil
 
-class Velocidad(private var _magnitud:Double , val direccion: Angulo = new Angulo(0.0)) {
+case class Velocidad(private var _magnitud:Double )( val direccion: Angulo = new Angulo(0.0)) {
   private var _sentidoX:Int = 1
   private var _sentidoY:Int = 1
   def magnitud = _magnitud

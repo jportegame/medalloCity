@@ -1,12 +1,6 @@
 package ciudad
 
-class Sentido(){
-  var nombre:String =_
-  
-  private def this(nombre:String){
-    this()
-    this.nombre= nombre
-  }
+case class Sentido private (val nombre:String){
 
 }
 

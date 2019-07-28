@@ -1,8 +1,9 @@
 package movil
 import inmovil._
-import scala.collection.mutable.Queue
-import ciudad.Via
-import ciudad.Interseccion
-class Carro(p:Punto, v : Velocidad, r:Queue[Via],intersec:Queue[Interseccion]) extends Vehiculo(p,v,r,intersec){
-  
+class Carro(p:Punto, v : Velocidad) extends Vehiculo()(p,v){
+  this.placa = this.generarPlacaAleatoria()
+  Vehiculo.setVehiculos += this
+  def generarPlacaAleatoria():String={
+    "PLACA DEL CARRO ALEATORIA"
+  }
 }
