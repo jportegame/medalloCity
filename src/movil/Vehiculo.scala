@@ -6,7 +6,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Queue
 import scalax.collection.edge.WLDiEdge
 
-class Vehiculo(pos: Punto, vel: Velocidad, var placa: String, val recorrido: Queue[Via], val interseccionesRecorrido: Queue[Interseccion]) extends Movil(pos, vel) with MovimientoUniforme {
+class Vehiculo(pos: Punto, vel: Velocidad, val recorrido: Queue[Via], val interseccionesRecorrido: Queue[Interseccion]) extends Movil(pos, vel) with MovimientoUniforme {
+  private var _placa: String = ""
   private var _viaActual: Via = recorrido.dequeue()
   private var _interseccionDestino: Interseccion = interseccionesRecorrido.dequeue()
   private var _detenido = false
@@ -34,13 +35,13 @@ class Vehiculo(pos: Punto, vel: Velocidad, var placa: String, val recorrido: Que
       if (this.posicion.x > xViaFin - margenError && this.posicion.x < xViaFin + margenError && this.posicion.y > yViaFin - margenError && this.posicion.y < yViaFin + margenError) {
         this.posicion.x = xViaFin
         this.posicion.y = yViaFin
-        if (!recorrido.isEmpty) {
+        if (!interseccionesRecorrido.isEmpty) {
           this.viaActual = recorrido.dequeue()
           this.interseccionDestino = interseccionesRecorrido.dequeue()
-          this.velocidad.direccion.valor = Vehiculo.anguloEntreDosPuntos(this.posicion, interseccionDestino)
           if (this.velocidad.magnitud > viaActual.velMaxima) {
             this.velocidad.magnitud = viaActual.velMaxima
           }
+          velocidad.anguloYSentidoEntreDosPuntos(this.posicion, this.interseccionDestino)
         } else {
           this.detenido = true
         }
@@ -67,45 +68,51 @@ object Vehiculo {
     while (origen == destino) {
       destino = GrafoVias.listaDeNodos(r.nextInt(GrafoVias.listaDeNodos.length))
     }
+
     val camino = (GrafoVias.n(origen)).shortestPathTo(GrafoVias.n(destino))
 
-    val interseccionesRecorrido = Vehiculo.toQueue(camino.last.nodes.map(_.value).toList)
-    val viasRecorrido = Vehiculo.toQueue(camino.last.edges.map(_.label.asInstanceOf[Via]).toList)
+    val interseccionesRecorrido = Vehiculo.toQueue(camino.get.nodes.map(_.value).toList)
+    val viasRecorrido = Vehiculo.toQueue(camino.get.edges.map(_.label.asInstanceOf[Via]).toList)
     val viaInicial = viasRecorrido.head
-    val velocidadMaximaViaInicial:Double = viaInicial.velMaxima
     var magnitudVelocidadAleatoria = (r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad
 
-    println("Velocidad incial 1:" + magnitudVelocidadAleatoria)
-    if (magnitudVelocidadAleatoria > velocidadMaximaViaInicial) {
-      magnitudVelocidadAleatoria = velocidadMaximaViaInicial
+    println("Velocidad incial 1:" + magnitudVelocidadAleatoria) //Borrar
+    if (magnitudVelocidadAleatoria > viaInicial.velMaxima) {
+      magnitudVelocidadAleatoria = viaInicial.velMaxima
     }
-    println("Velocidad incial 2:" + magnitudVelocidadAleatoria)
+    println("Velocidad incial 2:" + magnitudVelocidadAleatoria) //Borrar
     magnitudVelocidadAleatoria = Velocidad.conversorKmHorAMetroSeg(magnitudVelocidadAleatoria)
-    println("Velocidad incial 3: " + magnitudVelocidadAleatoria)
+    println("Velocidad incial 3: " + magnitudVelocidadAleatoria) //Borrar
 
-    println("Origen conceptual:" + origen)
-    println("Destino conceputal:" + destino)
-    println("Intersecciones: " + interseccionesRecorrido)
-    println("Vias: " + viasRecorrido)
+    println("Origen conceptual:" + origen) //Borrar
+    println("Destino conceputal:" + destino) //Borrar
+    println("Intersecciones: " + interseccionesRecorrido) //Borrar
+    println("Vias: " + viasRecorrido) //Borrar
 
     interseccionesRecorrido.dequeue()
     val interseccionInicial = interseccionesRecorrido.head
-    val velocidad = new Velocidad(magnitudVelocidadAleatoria, new Angulo(Vehiculo.anguloEntreDosPuntos(origen, interseccionInicial)))
-    val puntoOrigen = new Punto(origen.x,origen.y)
+    val puntoOrigen = new Punto(origen.x, origen.y)
+
     if (numeroAleatorio <= pCarros) {
-      return new Carro(puntoOrigen, velocidad, "", viasRecorrido, interseccionesRecorrido)
-
+      val vehiculo = new Carro(puntoOrigen, new Velocidad(magnitudVelocidadAleatoria), viasRecorrido, interseccionesRecorrido)
+      vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+      return vehiculo
     } else if (numeroAleatorio <= pMotos) {
-      return new Moto(puntoOrigen, velocidad, "", viasRecorrido, interseccionesRecorrido)
-
+      val vehiculo = new Moto(puntoOrigen, new Velocidad(magnitudVelocidadAleatoria), viasRecorrido, interseccionesRecorrido)
+      vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+      return vehiculo
     } else if (numeroAleatorio <= pBuses) {
-      return new Bus(puntoOrigen, velocidad, "", viasRecorrido, interseccionesRecorrido)
-
+      val vehiculo = new Bus(puntoOrigen, new Velocidad(magnitudVelocidadAleatoria), viasRecorrido, interseccionesRecorrido)
+      vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+      return vehiculo
     } else if (numeroAleatorio <= pCamiones) {
-      return new Camion(puntoOrigen, velocidad, "", viasRecorrido, interseccionesRecorrido)
-
+      val vehiculo = new Camion(puntoOrigen, new Velocidad(magnitudVelocidadAleatoria), viasRecorrido, interseccionesRecorrido)
+      vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+      return vehiculo
     } else {
-      return new MotoTaxi(puntoOrigen, velocidad, "", viasRecorrido, interseccionesRecorrido)
+      val vehiculo = new MotoTaxi(puntoOrigen, new Velocidad(magnitudVelocidadAleatoria), viasRecorrido, interseccionesRecorrido)
+      vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+      return vehiculo
     }
 
   }
@@ -115,13 +122,6 @@ object Vehiculo {
     L.foreach(f => Q += f)
     Q
 
-  }
-
-  def anguloEntreDosPuntos(p1: Punto, p2: Punto): Double = {
-    val dy = p2.y - p1.y
-    val dx = p2.x - p1.x
-    val magnitudAngular = math.atan(dy / dx).toDegrees
-    magnitudAngular
   }
 
 }

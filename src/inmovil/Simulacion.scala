@@ -140,7 +140,11 @@ object Simulacion extends Runnable {
   def run() {
     Simulacion.cargar()
     println("Hola")
+
     val vehiculo = Vehiculo.apply()
+    
+    val dequeInterseccion = vehiculo.interseccionesRecorrido
+    val dequeVias = vehiculo.recorrido
 
     println(s"Interseccion destino Inicial: ${vehiculo.interseccionDestino} ")
     var i = 3
@@ -153,30 +157,20 @@ object Simulacion extends Runnable {
 
     })
 
-    println("t: " + Simulacion.t)
-    println("angulo:" + vehiculo.velocidad.direccion.valor)
-    println("Componente velocidad X:" + vehiculo.velocidad.magnitud * Math.cos(vehiculo.velocidad.direccion.valor.toRadians))
-    println("Componente velocidad Y:" + vehiculo.velocidad.magnitud * Math.sin(vehiculo.velocidad.direccion.valor.toRadians))
-    vehiculo.mover(Simulacion.t)
-    println(vehiculo.posicion)
-    Simulacion.t += Simulacion.dt
+    while (!vehiculo.detenido) {
+      println("t: " + Simulacion.t)
+      println("Interseccion destino: " + vehiculo.interseccionDestino)
+      println("angulo:" + vehiculo.velocidad.direccion.valor)
+      println("Componente velocidad X:" + vehiculo.velocidad.magnitud * Math.cos(vehiculo.velocidad.direccion.valor.toRadians))
+      println("Componente velocidad Y:" + vehiculo.velocidad.magnitud * Math.sin(vehiculo.velocidad.direccion.valor.toRadians))
+      vehiculo.mover(Simulacion.dt)
+      println(vehiculo.posicion)
+      Simulacion.t += Simulacion.dt
+    }
 
-    println("t: " + Simulacion.t)
-    println("angulo:" + vehiculo.velocidad.direccion.valor)
-    println("Componente velocidad X:" + vehiculo.velocidad.magnitud * Math.cos(vehiculo.velocidad.direccion.valor.toRadians))
-    println("Componente velocidad Y:" + vehiculo.velocidad.magnitud * Math.sin(vehiculo.velocidad.direccion.valor.toRadians))
-    vehiculo.mover(Simulacion.t)
-    println(vehiculo.posicion)
-    Simulacion.t += Simulacion.dt
-
-    println("t: " + Simulacion.t)
-    println("angulo:" + vehiculo.velocidad.direccion.valor)
-    println("Componente velocidad X:" + vehiculo.velocidad.magnitud * Math.cos(vehiculo.velocidad.direccion.valor.toRadians))
-    println("Componente velocidad Y:" + vehiculo.velocidad.magnitud * Math.sin(vehiculo.velocidad.direccion.valor.toRadians))
-    vehiculo.mover(Simulacion.t)
-    println(vehiculo.posicion)
-    Simulacion.t += Simulacion.dt
-
+    
+    println("Intersecciones: "+ dequeInterseccion)
+    println("Vias: " + dequeVias)
   }
 
 }
