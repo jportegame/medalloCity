@@ -1,6 +1,5 @@
 package inmovil
 import scala.collection.mutable.ArrayBuffer
-import movil.Vehiculo
 import ciudad._
 object Simulacion extends Runnable {
   val grafo = GrafoVias
@@ -14,7 +13,6 @@ object Simulacion extends Runnable {
   val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
-  val listaIntersecciones = GrafoVias.listaDeNodos
 
   
 

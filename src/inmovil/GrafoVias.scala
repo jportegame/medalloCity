@@ -1,9 +1,8 @@
 package inmovil
-import scalax.collection.GraphPredef._, scalax.collection.GraphEdge._
-import scalax.collection.edge.WLDiEdge
 import ciudad.Interseccion
 import ciudad.Via
-import ciudad.Sentido
+import scalax.collection.GraphPredef._, scalax.collection.GraphEdge._
+import scalax.collection.edge.WLDiEdge
 import scala.collection.mutable.ArrayBuffer
 import scalax.collection.mutable.Graph
 
