@@ -1,6 +1,7 @@
 package inmovil
 import scala.collection.mutable.ArrayBuffer
 import ciudad._
+import grafico.Grafico
 object Simulacion extends Runnable {
   val grafo = GrafoVias
   var t: Double = 0
@@ -139,7 +140,8 @@ object Simulacion extends Runnable {
         VehiculoSimulacion.apply()
       }
       println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
-
+      
+      val grafico=new Grafico(vias)
   }
   def run() {
     Simulacion.cargar()
