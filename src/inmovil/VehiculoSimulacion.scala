@@ -36,9 +36,10 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
           vehiculo.velocidad.anguloYSentidoEntreDosPuntos(vehiculo.posicion, this.interseccionDestino)
         } else {
           vehiculo.detenido = true
-          VehiculoSimulacion.listaDeVehiculosSimulacion.-=(this)
         }
       }
+    }else{
+       VehiculoSimulacion.listaDeVehiculosSimulacion.-=(this)
     }
   }
 }
