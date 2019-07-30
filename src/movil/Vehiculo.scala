@@ -1,10 +1,6 @@
 package movil
 import inmovil._
-import ciudad.Interseccion
-import ciudad.Via
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Set
-import scalax.collection.edge.WLDiEdge
 
 case class Vehiculo(var placa:String = "")(pos: Punto, vel: Velocidad) extends Movil(pos, vel) with MovimientoUniforme {
 

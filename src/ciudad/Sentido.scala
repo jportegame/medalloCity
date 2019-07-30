@@ -5,10 +5,13 @@ case class Sentido private (val nombre:String){
 }
 
 object Sentido{
+  
+  private val unSentidoObject = new Sentido("Un sentido")
+  private val unDobleSentidoObject=new Sentido("Doble via")
   def unaVia:Sentido = {
-    new Sentido("Un sentido")
+    unSentidoObject
   }
   def dobleVia:Sentido = {
-    new Sentido("Doble via")
+    unDobleSentidoObject
   }
 }
