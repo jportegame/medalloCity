@@ -2,11 +2,13 @@ package inmovil
 import scala.collection.mutable.ArrayBuffer
 import ciudad._
 import grafico.Grafico
+import movil.Vehiculo
 object Simulacion extends Runnable {
+  var running = false
   val grafo = GrafoVias
   var t: Double = 0
   var dt: Double = 1
-  val tRefresh = 1  
+  val tRefresh = 1
   val minVehiculos = 1
   val maxVehiculos = 1
   val minVelocidad: Double = 30
@@ -14,8 +16,7 @@ object Simulacion extends Runnable {
   val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
-
-  
+  val hilo = new Thread(Simulacion)
 
   def cargar() {
 
@@ -133,20 +134,34 @@ object Simulacion extends Runnable {
       new Via(agua, santafe, 60, TipoVia("Calle"), Sentido.dobleVia, "12S", "80"),
       new Via(viva, pqEnv, 60, TipoVia("Calle"), Sentido.dobleVia, "37S", "37S"),
       new Via(viva, gu_37S, 60, TipoVia("Calle"), Sentido.dobleVia, "63", "37S"))
-      listaVias = vias
-      grafo.construir(vias)
-  
-      for (i <- 0 until Simulacion.totalVehiculos) {
-        VehiculoSimulacion.apply()
-      }
-      println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
-      
-      val grafico=new Grafico(vias)
+    listaVias = vias
+    grafo.construir(vias)
+    println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
+    val grafico = new Grafico(vias)
+  }
+  def start() {
+    if (running) {
+      Simulacion.stop()
+    }
+
+    hilo.start
+  }
+
+  def stop() {
+    Vehiculo.setPlacas.clear()
+    VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
+    Grafico.reiniciarVehiculos()
+    running = false
+    hilo.interrupt()
   }
   def run() {
-    Simulacion.cargar()
-    // Prepruebas visuales que deben ser borradas-inicio
     
+    for (i <- 0 until Simulacion.totalVehiculos) {
+      VehiculoSimulacion.apply()
+    }
+
+    // Prepruebas visuales que deben ser borradas-inicio
+
     val vehiculoSimulacion = VehiculoSimulacion.listaDeVehiculosSimulacion(0)
 
     val dequeInterseccion = vehiculoSimulacion.interseccionesRecorrido
@@ -165,6 +180,8 @@ object Simulacion extends Runnable {
 
     // Prepruebas visuales que deben ser borradas-fin
 
+    Simulacion.running = true
+
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -inicio
       println("t: " + Simulacion.t)
@@ -175,20 +192,17 @@ object Simulacion extends Runnable {
       vehiculoSimulacion.mover(Simulacion.dt)
       println(vehiculoSimulacion.vehiculo.posicion)
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -fin
-      
-      
+
       Simulacion.t += Simulacion.dt
-      
-      
+
       //funcion de pajoy que recoje los datos desde la misma lista de [VehiculoSimulacion]
-      
-      
-      Thread.sleep(tRefresh*1000)
+
+      Thread.sleep(tRefresh * 1000)
     }
     // Postpruebas visuales que deben ser borradas-inicio
     println("Intersecciones: " + dequeInterseccion)
     println("Vias: " + dequeVias)
-    // Postpruebas visuales que deben ser borradas-fin 
+    // Postpruebas visuales que deben ser borradas-fin
 
   }
 

@@ -1,5 +1,9 @@
 package main
 import inmovil.Simulacion
-object Main extends App{
-  Simulacion.run()
+object Main{
+  val hilo = new Thread(Simulacion)
+  def main(args: Array[String]){
+    Simulacion.cargar()
+  }
+  
 }
