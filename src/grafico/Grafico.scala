@@ -101,11 +101,19 @@ object Grafico{
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
     println(vehiculo.placa)
-    var vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
+    val vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
     vehiculoGrafico.add(punto.x, punto.y)
     this.dataset.addSeries(vehiculoGrafico)
     this.renderer.setSeriesShape(this.dataset.getSeriesCount, new Rectangle(-4,-4,6,6))
     this.renderer.setSeriesPaint(this.dataset.getSeriesCount,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+  }
+  
+  def actualizarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
+    val vehiculo=vehiculoSimulacion.vehiculo
+    val punto=vehiculo.posicion
+    val vehiculoGrafico: XYSeries = this.dataset.getSeries(vehiculo.placa)
+    vehiculoGrafico.clear()
+    vehiculoGrafico.add(punto.x, punto.y)
   }
   
   def randomHex():String={
