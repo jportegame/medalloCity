@@ -142,7 +142,7 @@ object Simulacion extends Runnable {
     listaVias = vias
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
-    val grafico =Grafico
+    val grafico = Grafico
     grafico.iniciarGrafico(vias)
     Simulacion.run()
 
@@ -220,9 +220,29 @@ object Simulacion extends Runnable {
     val viasDobleSentido = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).filter(v => v.sentido.nombre == "Doble via").distinct.length
     val velMaximaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).max
     val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
-    val longitudPromedio = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia)
+    val longitudPromedio = (VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia).sum) / vias
     
+    val mapPromedioOrigen = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas(0)))
+    var origen = 0
+    mapPromedioOrigen.foreach(f=>{
+      origen +=f._2
+    })
+    val PromedioOrigen = origen/(mapPromedioOrigen.size)
     
+    def contar(rec: ArrayBuffer[Interseccion]): scala.collection.mutable.Map[Interseccion, Int] = {
+      var r = scala.collection.mutable.Map[Interseccion, Int]()
+      rec.foreach(f => {
+        if (!(r.contains(f))) {
+          r += (f -> 1)
+        } else {
+          var aux = r.get(f).get.toInt
+          r.remove(f)
+          r += (f -> (1 + aux))
+        }
+      })
+      r
+    }
+
     println("TTTTTTTTTTTTTTTTTTTT")
     println(s"$velMaximaVias, $velMinimaVias")
 
