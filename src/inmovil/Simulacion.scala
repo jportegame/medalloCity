@@ -2,7 +2,7 @@ package inmovil
 import scala.collection.mutable.ArrayBuffer
 import ciudad._
 import grafico.Grafico
-import movil.Vehiculo
+import movil._
 object Simulacion extends Runnable {
   var running = false
   val grafo = GrafoVias
@@ -138,7 +138,7 @@ object Simulacion extends Runnable {
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico = new Grafico(vias)
-    Simulacion.run()
+    
   }
   def start() {
     if (running) {
@@ -151,7 +151,7 @@ object Simulacion extends Runnable {
   def stop() {
     Vehiculo.setPlacas.clear()
     VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
-    //Grafico.reiniciarVehiculos()
+    Grafico.reiniciarVehiculos()
     running = false
     hilo.interrupt()
   }
@@ -182,6 +182,24 @@ object Simulacion extends Runnable {
     // Prepruebas visuales que deben ser borradas-fin
 
     Simulacion.running = true
+    
+    
+        //CALCULOS DE PAJOY
+    
+    val totalVehiculos = VehiculoSimulacion.listaDeVehiculosSimulacion.length
+    val totalCarros =  VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Carro]).length
+    val totalMotos = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Moto]).length
+    val totalBuses = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Bus]).length
+    val totalCamiones = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Camion]).length
+    val totalMototaxis = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[MotoTaxi]).length
+    
+    val vias = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.recorrido)//Revisar
+    val intersecciones = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesRecorrido)
+    println("TTTTTTTTTTTTTTTTTTTT")
+    println(s"$intersecciones")
+    
+    
+    //FIN CALCULOS PAJOY
 
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -inicio
