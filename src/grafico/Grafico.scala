@@ -97,6 +97,16 @@ object Grafico{
     }
   }
   
+  def cargarVehiculos(vehiculoSimulacion:VehiculoSimulacion){
+    val vehiculo=vehiculoSimulacion.vehiculo
+    val punto=vehiculo.posicion
+    var vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
+    vehiculoGrafico.add(punto.x, punto.y)
+    this.dataset.addSeries(vehiculoGrafico)
+    this.renderer.setSeriesShape(this.dataset.getSeriesCount, new Rectangle(-4,-4,6,6))
+    this.renderer.setSeriesPaint(this.dataset.getSeriesCount,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+  }
+  
   def randomHex():String={
       val random = new Random()
       var letters:Array[String] = "0123456789ABCDEF".split("")

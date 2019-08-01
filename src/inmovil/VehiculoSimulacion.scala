@@ -84,6 +84,7 @@ object VehiculoSimulacion {
 
     val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido,viasRecorridoCompleto,interseccionesRecorridoCompleto)
     vehiculoDeSimulacion.vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
+    
     return vehiculoDeSimulacion
   }
 

@@ -8,21 +8,21 @@ import EntradaSimulacion.Entrada
 import SalidaSimulacion.Salida
 object Simulacion extends Runnable {
   val jsonAdmin = new Json[Salida]
-  val parametros = jsonAdmin.leerDatosIniciales("C:\\Users\\Acer\\Documents\\documentos\\semestre 5\\Scala\\Proyecto1\\medalloCity\\src\\parametros.json")
+  //val parametros = jsonAdmin.leerDatosIniciales("D:\\INGENIERIA DE SISTEMAS\\PROLOG\\Trabajo MEDALLOCITY\\medalloCity\\src\\parametros.json")
   var running = false
   val grafo = GrafoVias
   var t: Double = 0
-  var dt: Double = parametros.pametrosSimulacion.dt
-  val tRefresh = parametros.pametrosSimulacion.tRefresh
-  val minVehiculos = parametros.pametrosSimulacion.vehiculos.minimo
-  val maxVehiculos = parametros.pametrosSimulacion.vehiculos.maximo
-  val minVelocidad: Double = parametros.pametrosSimulacion.velocidad.minimo
-  val maxVelocidad: Double = parametros.pametrosSimulacion.velocidad.maximo
+  var dt: Double = 1
+  val tRefresh = 1
+  val minVehiculos = 50
+  val maxVehiculos = 100
+  val minVelocidad: Double = 40
+  val maxVelocidad: Double = 80
   val totalVehiculos = 2 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
-
+8
   def cargar() {
 
     val niquia = new Interseccion(300, 12000, "Niquia")
