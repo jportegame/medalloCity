@@ -256,8 +256,10 @@ object Simulacion extends Runnable {
       println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.sentidoY * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
       vehiculoSimulacion.mover(Simulacion.dt)
       println(vehiculoSimulacion.vehiculo.posicion)
+      val grafico=Grafico
+      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(grafico.actualizarVehiculo(_))
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -fin
-
+      
       Simulacion.t += Simulacion.dt
 
       //funcion de pajoy que recoje los datos desde la misma lista de [VehiculoSimulacion]
