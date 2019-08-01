@@ -138,6 +138,7 @@ object Simulacion extends Runnable {
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico = new Grafico(vias)
+    Simulacion.run()
   }
   def start() {
     if (running) {
@@ -150,7 +151,7 @@ object Simulacion extends Runnable {
   def stop() {
     Vehiculo.setPlacas.clear()
     VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
-    Grafico.reiniciarVehiculos()
+    //Grafico.reiniciarVehiculos()
     running = false
     hilo.interrupt()
   }
