@@ -142,7 +142,8 @@ object Simulacion extends Runnable {
     listaVias = vias
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
-    val grafico = new Grafico(vias)
+    val grafico =Grafico
+    grafico.iniciarSimulacion(vias)
     Simulacion.run()
 
   }
@@ -219,7 +220,7 @@ object Simulacion extends Runnable {
     val viasDobleSentido = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).filter(v => v.sentido.nombre == "Doble via").distinct.length
     val velMaximaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).max
     val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
-    val longitudPromedio = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).map(_.distancia)
+    val longitudPromedio = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia)
     
     
     println("TTTTTTTTTTTTTTTTTTTT")
