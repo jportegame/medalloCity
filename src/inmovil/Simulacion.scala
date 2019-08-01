@@ -22,7 +22,7 @@ object Simulacion extends Runnable {
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
-8
+
   def cargar() {
 
     val niquia = new Interseccion(300, 12000, "Niquia")
