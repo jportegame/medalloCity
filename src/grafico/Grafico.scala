@@ -29,67 +29,67 @@ import java.awt.geom.Ellipse2D
 import java.awt.Rectangle
 import java.awt.Polygon
 
-class Grafico{
+object Grafico{
   val coloresIntersecciones:Map[Interseccion, Color]=Map()
-
-  def this(vias:ArrayBuffer[Via]){
-    this()
-    var renderer: XYLineAndShapeRenderer = new XYLineAndShapeRenderer()
-  	renderer.setAutoPopulateSeriesStroke(false)
-  	renderer.setAutoPopulateSeriesPaint(false)
+  val dataset: XYSeriesCollection = new XYSeriesCollection();
+  val renderer: XYLineAndShapeRenderer = new XYLineAndShapeRenderer()
+  var plot: XYPlot = null
+  
+  def iniciarGrafico(vias:ArrayBuffer[Via]){
   	
-    renderer.setBaseStroke(new BasicStroke(4))
-    renderer.setBasePaint(Color.decode("#cccccc"))
+    this.renderer.setAutoPopulateSeriesStroke(false)
+  	this.renderer.setAutoPopulateSeriesPaint(false)
+  	
+    this.renderer.setBaseStroke(new BasicStroke(4))
+    this.renderer.setBasePaint(Color.decode("#cccccc"))
     
-    val dataset=cargarMapa(vias,renderer)
+    cargarMapa(vias)
     
-    var xyScatterChart: JFreeChart = ChartFactory.createScatterPlot(
+    val xyScatterChart: JFreeChart = ChartFactory.createScatterPlot(
   	null, 
   	null, 
   	null, 
-  	dataset,
+  	this.dataset,
   	PlotOrientation.VERTICAL, false, false, false)
 
 
-  	var plot: XYPlot = xyScatterChart.getXYPlot()
+  	this.plot=xyScatterChart.getXYPlot()
 
-  	plot.setBackgroundPaint(Color.WHITE)
+  	this.plot.setBackgroundPaint(Color.WHITE)
   	
 
-  	var range:  ValueAxis = plot.getRangeAxis()
+  	val range:  ValueAxis = plot.getRangeAxis()
     range.setVisible(true)
-    var domain: ValueAxis = plot.getDomainAxis()
+    val domain: ValueAxis = plot.getDomainAxis()
     domain.setVisible(true)
     
-    this.cargarIntersecciones(dataset, renderer, plot)
+    this.cargarIntersecciones(plot)
 
-  	plot.setRenderer(renderer)
+  	this.plot.setRenderer(this.renderer)
   	
 
-  	var ventana: ChartFrame = new ChartFrame("vehTraffic", xyScatterChart);
+  	val ventana: ChartFrame = new ChartFrame("vehTraffic", xyScatterChart);
   	ventana.setVisible(true);
   	ventana.setSize(1300, 700);
   	ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
-  def cargarMapa(vias:ArrayBuffer[Via],renderer:XYLineAndShapeRenderer):XYSeriesCollection={
-    var dataset: XYSeriesCollection = new XYSeriesCollection();
+  def cargarMapa(vias:ArrayBuffer[Via]){
     for(via<-vias){
       val nuevaVia: XYSeries  = new XYSeries(via.nombre+"-"+via.origen.nombre+"-"+via.fin.nombre)
     	nuevaVia.add(via.origen.xi, via.origen.yi)
     	nuevaVia.add(via.fin.xi, via.fin.yi)
-      dataset.addSeries(nuevaVia)
+      this.dataset.addSeries(nuevaVia)
       renderer.setSeriesShapesVisible(dataset.getSeriesCount, false)
     }
-    return dataset
   }
   
-  def cargarIntersecciones(dataset:XYSeriesCollection,renderer:XYLineAndShapeRenderer,plot:XYPlot){
+  def cargarIntersecciones(plot:XYPlot){
     val random = new Random()
     val intersecciones:ArrayBuffer[Interseccion]=GrafoVias.listaDeNodos
     for(interseccion<-intersecciones){
       val color=Color.decode(randomHex())
-      renderer.setSeriesPaint(dataset.getSeriesCount,color)
+      this.renderer.setSeriesPaint(this.dataset.getSeriesCount,color)
       val label: XYTextAnnotation = new XYTextAnnotation(interseccion.nombre,interseccion.xi, interseccion.yi+(350)*((random.nextFloat()*2).round-1))
     	label.setPaint(color)
     	plot.addAnnotation(label)
