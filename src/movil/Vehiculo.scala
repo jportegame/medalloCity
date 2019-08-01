@@ -18,11 +18,12 @@ object Vehiculo {
   
   val setPlacas:Set[String] = Set()
   
-  val pCarros = 0.4
-  val pMotos = 0.3 + pCarros
-  val pBuses = 0.15 + pMotos
-  val pCamiones = 0.1 + pBuses
-  val pMotoTaxis = 0.05 + pCamiones
+  
+  val pCarros:Double = Simulacion.parametros.pametrosSimulacion.proporciones.carros
+  val pMotos:Double = Simulacion.parametros.pametrosSimulacion.proporciones.motos + pCarros
+  val pBuses:Double = Simulacion.parametros.pametrosSimulacion.proporciones.buses + pMotos
+  val pCamiones:Double = Simulacion.parametros.pametrosSimulacion.proporciones.camiones + pBuses
+  val pMotoTaxis:Double = Simulacion.parametros.pametrosSimulacion.proporciones.motoTaxis + pCamiones
 
   def apply(pos: Punto, vel: Velocidad): Vehiculo = {
     val r = new scala.util.Random

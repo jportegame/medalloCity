@@ -3,17 +3,22 @@ import scala.collection.mutable.ArrayBuffer
 import ciudad._
 import grafico.Grafico
 import movil._
+import Json.Json
+import EntradaSimulacion.Entrada
+import SalidaSimulacion.Salida
 object Simulacion extends Runnable {
+  val jsonAdmin = new Json[Salida]
+  val parametros = jsonAdmin.leerDatosIniciales("C:\\Users\\Acer\\Documents\\documentos\\semestre 5\\Scala\\Proyecto1\\medalloCity\\src\\parametros.json")
   var running = false
   val grafo = GrafoVias
   var t: Double = 0
-  var dt: Double = 1
-  val tRefresh = 1
-  val minVehiculos = 1
-  val maxVehiculos = 1
-  val minVelocidad: Double = 30
-  val maxVelocidad: Double = 70
-  val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
+  var dt: Double = parametros.pametrosSimulacion.dt
+  val tRefresh = parametros.pametrosSimulacion.tRefresh
+  val minVehiculos = parametros.pametrosSimulacion.vehiculos.minimo
+  val maxVehiculos = parametros.pametrosSimulacion.vehiculos.maximo
+  val minVelocidad: Double = parametros.pametrosSimulacion.velocidad.minimo
+  val maxVelocidad: Double = parametros.pametrosSimulacion.velocidad.maximo
+  val totalVehiculos = 2 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
@@ -138,7 +143,8 @@ object Simulacion extends Runnable {
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico = new Grafico(vias)
-    
+    Simulacion.run()
+
   }
   def start() {
     if (running) {
@@ -151,16 +157,32 @@ object Simulacion extends Runnable {
   def stop() {
     Vehiculo.setPlacas.clear()
     VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
-    Grafico.reiniciarVehiculos()
+    //Grafico.reiniciarVehiculos()
     running = false
     hilo.interrupt()
   }
   def run() {
-    
+
     for (i <- 0 until Simulacion.totalVehiculos) {
       VehiculoSimulacion.apply()
     }
 
+    //Parametros
+    println("dt: " + Simulacion.dt)
+    println("tRefresh: " + Simulacion.tRefresh)
+    println("minVehiculos: " + Simulacion.minVehiculos)
+    println("maxVehiculos: " + Simulacion.maxVehiculos)
+    println("minVelocidad: " + Simulacion.minVelocidad)
+    println("maxVelocidad: " + Simulacion.maxVelocidad)
+    println("totalVehiculos: " + Simulacion.totalVehiculos)
+
+    println("Proporcion carros: " + Vehiculo.pCarros)
+    println("Proporcion moto: " + Vehiculo.pMotos)
+    println("Proporcion buses: " + Vehiculo.pBuses)
+    println("Proporcion camiones: " + Vehiculo.pCamiones)
+    println("Proporcion mototaxis: " + Vehiculo.pMotoTaxis)
+
+    //fin parametros
     // Prepruebas visuales que deben ser borradas-inicio
 
     val vehiculoSimulacion = VehiculoSimulacion.listaDeVehiculosSimulacion(0)
@@ -182,23 +204,27 @@ object Simulacion extends Runnable {
     // Prepruebas visuales que deben ser borradas-fin
 
     Simulacion.running = true
-    
-    
-        //CALCULOS DE PAJOY
-    
+    //CALCULOS DE PAJOY
+
     val totalVehiculos = VehiculoSimulacion.listaDeVehiculosSimulacion.length
-    val totalCarros =  VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Carro]).length
+    val totalCarros = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Carro]).length
     val totalMotos = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Moto]).length
     val totalBuses = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Bus]).length
     val totalCamiones = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Camion]).length
     val totalMototaxis = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[MotoTaxi]).length
+
+    val vias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.length
+    val intersecciones = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.interseccionesCompletas).distinct.length
+    val viasUnSentido = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).filter(v => v.sentido.nombre == "Un sentido").distinct.length
+    val viasDobleSentido = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).filter(v => v.sentido.nombre == "Doble via").distinct.length
+    val velMaximaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).max
+    val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
+    val longitudPromedio = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).map(_.distancia)
     
-    val vias = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.recorrido)//Revisar
-    val intersecciones = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesRecorrido)
+    
     println("TTTTTTTTTTTTTTTTTTTT")
-    println(s"$intersecciones")
-    
-    
+    println(s"$velMaximaVias, $velMinimaVias")
+
     //FIN CALCULOS PAJOY
 
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {

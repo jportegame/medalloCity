@@ -5,7 +5,7 @@ import movil.Vehiculo
 import scala.collection.mutable.Queue
 import scala.collection.mutable.ArrayBuffer
 
-class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val interseccionesRecorrido: Queue[Interseccion]) {
+class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val interseccionesRecorrido: Queue[Interseccion], val recorridoCompleto:Array[Via], val interseccionesCompletas:Array[Interseccion]) {
   VehiculoSimulacion.listaDeVehiculosSimulacion += this
 
   private var _viaActual: Via = recorrido.dequeue()
@@ -57,9 +57,12 @@ object VehiculoSimulacion {
     }
 
     val camino = (GrafoVias.n(origen)).shortestPathTo(GrafoVias.n(destino))
+    
+    val interseccionesRecorridoCompleto = camino.get.nodes.map(_.value).toArray
+    val viasRecorridoCompleto = camino.get.edges.map(_.label.asInstanceOf[Via]).toArray
 
-    val interseccionesRecorrido = VehiculoSimulacion.toQueue(camino.get.nodes.map(_.value).toList)
-    val viasRecorrido = VehiculoSimulacion.toQueue(camino.get.edges.map(_.label.asInstanceOf[Via]).toList)
+    val interseccionesRecorrido = VehiculoSimulacion.toQueue(interseccionesRecorridoCompleto)
+    val viasRecorrido = VehiculoSimulacion.toQueue(viasRecorridoCompleto)
     val viaInicial = viasRecorrido.head
     var magnitudVelocidadAleatoria = (r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad
     println("Velocidad incial 1:" + magnitudVelocidadAleatoria) //Borrar
@@ -79,12 +82,12 @@ object VehiculoSimulacion {
     val interseccionInicial = interseccionesRecorrido.head
     val puntoOrigen = new Punto(origen.x, origen.y)
 
-    val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido)
+    val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido,viasRecorridoCompleto,interseccionesRecorridoCompleto)
     vehiculoDeSimulacion.vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
     return vehiculoDeSimulacion
   }
 
-  def toQueue[T](L: List[T]): Queue[T] = {
+  def toQueue[T](L: Array[T]): Queue[T] = {
     val Q = new Queue[T]();
     L.foreach(f => Q += f)
     return Q
