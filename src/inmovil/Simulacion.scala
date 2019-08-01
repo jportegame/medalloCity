@@ -221,14 +221,7 @@ object Simulacion extends Runnable {
     val velMaximaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).max
     val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
     val longitudPromedio = (VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia).sum) / vias
-    
-    val mapPromedioOrigen = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas(0)))
     var origen = 0
-    mapPromedioOrigen.foreach(f=>{
-      origen +=f._2
-    })
-    val PromedioOrigen = origen/(mapPromedioOrigen.size)
-    
     def contar(rec: ArrayBuffer[Interseccion]): scala.collection.mutable.Map[Interseccion, Int] = {
       var r = scala.collection.mutable.Map[Interseccion, Int]()
       rec.foreach(f => {
@@ -242,6 +235,12 @@ object Simulacion extends Runnable {
       })
       r
     }
+    val mapPromedioOrigen = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas(0)))
+
+    mapPromedioOrigen.foreach(f => {
+      origen += f._2
+    })
+    val PromedioOrigen = origen / (mapPromedioOrigen.size)
 
     println("TTTTTTTTTTTTTTTTTTTT")
     println(s"$velMaximaVias, $velMinimaVias")
