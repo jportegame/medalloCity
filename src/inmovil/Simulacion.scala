@@ -143,7 +143,7 @@ object Simulacion extends Runnable {
     grafo.construir(vias)
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico =Grafico
-    grafico.iniciarSimulacion(vias)
+    grafico.iniciarGrafico(vias)
     Simulacion.run()
 
   }
