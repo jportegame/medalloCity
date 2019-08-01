@@ -97,9 +97,10 @@ object Grafico{
     }
   }
   
-  def cargarVehiculos(vehiculoSimulacion:VehiculoSimulacion){
+  def cargarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
+    println(vehiculo.placa)
     var vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
     vehiculoGrafico.add(punto.x, punto.y)
     this.dataset.addSeries(vehiculoGrafico)

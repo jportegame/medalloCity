@@ -2,6 +2,7 @@ package inmovil
 import ciudad.Via
 import ciudad.Interseccion
 import movil.Vehiculo
+import grafico.Grafico
 import scala.collection.mutable.Queue
 import scala.collection.mutable.ArrayBuffer
 
@@ -84,7 +85,8 @@ object VehiculoSimulacion {
 
     val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido,viasRecorridoCompleto,interseccionesRecorridoCompleto)
     vehiculoDeSimulacion.vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
-    
+    val grafico=Grafico
+    grafico.cargarVehiculo(vehiculoDeSimulacion)
     return vehiculoDeSimulacion
   }
 

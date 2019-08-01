@@ -18,7 +18,7 @@ object Simulacion extends Runnable {
   val maxVehiculos = 100
   val minVelocidad: Double = 40
   val maxVelocidad: Double = 80
-  val totalVehiculos = 2 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
+  val totalVehiculos = 10 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
