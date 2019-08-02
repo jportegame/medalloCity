@@ -144,7 +144,6 @@ object Simulacion extends Runnable {
       new Via(viva, gu_37S, 60, TipoVia("Calle"), Sentido.dobleVia, "63", "37S"))
     listaVias = vias
     grafo.construir(vias)
-    println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico = Grafico
     grafico.iniciarGrafico(vias)
 

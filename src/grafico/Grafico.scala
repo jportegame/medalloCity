@@ -84,13 +84,13 @@ object Grafico{
   }
   
   def cargarMapa(vias:ArrayBuffer[Via]){
-    for(via<-vias){
+    vias.foreach(via=>{
       val nuevaVia: XYSeries  = new XYSeries(via.nombre+"-"+via.origen.nombre+"-"+via.fin.nombre)
     	nuevaVia.add(via.origen.xi, via.origen.yi)
     	nuevaVia.add(via.fin.xi, via.fin.yi)
       this.dataset.addSeries(nuevaVia)
       renderer.setSeriesShapesVisible(dataset.getSeriesCount-1, false)
-    }
+    })
   }
   
   def borrarVehiculos(vehiculosSimulacion: ArrayBuffer[VehiculoSimulacion]) = {
@@ -102,14 +102,14 @@ object Grafico{
   def cargarIntersecciones(plot:XYPlot){
     val random = new Random()
     val intersecciones:ArrayBuffer[Interseccion]=GrafoVias.listaDeNodos
-    for(interseccion<-intersecciones){
+    intersecciones.foreach(interseccion=>{
       val colorHex=randomHex()
       this.renderer.setSeriesPaint(this.dataset.getSeriesCount,Color.decode(colorHex))
       val label: XYTextAnnotation = new XYTextAnnotation(interseccion.nombre,interseccion.xi, interseccion.yi+(350)*((random.nextFloat()*2).round-1))
     	label.setPaint(Color.decode(colorHex))
     	plot.addAnnotation(label)
     	this.coloresIntersecciones+=(interseccion->colorHex)
-    }
+    })
   }
   
   
