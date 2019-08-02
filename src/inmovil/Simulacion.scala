@@ -4,8 +4,8 @@ import ciudad._
 import grafico.Grafico
 import movil._
 import Json.Json
-import EntradaSimulacion.Entrada
-import SalidaSimulacion.Salida
+import EntradaSimulacion._
+import SalidaSimulacion._
 object Simulacion extends Runnable {
   val jsonAdmin = new Json[Salida]
   //val parametros = jsonAdmin.leerDatosIniciales("D:\\INGENIERIA DE SISTEMAS\\PROLOG\\Trabajo MEDALLOCITY\\medalloCity\\src\\parametros.json")
@@ -13,16 +13,16 @@ object Simulacion extends Runnable {
   val grafo = GrafoVias
   var t: Double = 0
   var dt: Double = 1
-  val tRefresh = 1
-  val minVehiculos = 50
+  val tRefresh = 1/10
+  val minVehiculos = 1
   val maxVehiculos = 100
   val minVelocidad: Double = 40
   val maxVelocidad: Double = 80
-  val totalVehiculos = 10 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
+  val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
-
+  var listaIntersecciones = ArrayBuffer.empty[Interseccion]
   def cargar() {
 
     val niquia = new Interseccion(300, 12000, "Niquia")
@@ -67,6 +67,13 @@ object Simulacion extends Runnable {
     val gu80 = new Interseccion(19500, 12000, "Guay 80")
     val _65_80 = new Interseccion(19500, 10500, "65 con 30")
     val gu_37S = new Interseccion(21000, 12000, "Guay con 37S")
+
+    val intersect = ArrayBuffer(niquia, lauraAuto, lauraReg, ptoCero, mino, villa, ig65, robledo, colReg, colFerr, col65, col80, juanOr,
+      maca, expo, reg30, monte, agua, viva, mayor, ferrCol, ferrJuan, sanDiego, premium, pp, santafe, pqEnv, juan65, juan80, _33_65,
+      bule, gema, _30_65, _30_70, _30_80, bol65, gu10, terminal, gu30, gu80, _65_80, gu_37S)
+
+    listaIntersecciones = intersect
+
     val vias = ArrayBuffer(
       new Via(niquia, lauraAuto, 80, TipoVia("Carrera"), Sentido.dobleVia, "64C", "Auto Norte"),
       new Via(niquia, lauraReg, 80, TipoVia("Carrera"), Sentido.dobleVia, "62", "Regional"),
@@ -207,6 +214,20 @@ object Simulacion extends Runnable {
     Simulacion.running = true
     //CALCULOS DE PAJOY
 
+    def contar(rec: ArrayBuffer[Interseccion]): scala.collection.mutable.Map[Interseccion, Int] = {
+      var r = scala.collection.mutable.Map[Interseccion, Int]()
+      rec.foreach(f => {
+        if (!(r.contains(f))) {
+          r += (f -> 1)
+        } else {
+          var aux = r.get(f).get.toInt
+          r.remove(f)
+          r += (f -> (1 + aux))
+        }
+      })
+      r
+    }
+
     val totalVehiculos = VehiculoSimulacion.listaDeVehiculosSimulacion.length
     val totalCarros = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Carro]).length
     val totalMotos = VehiculoSimulacion.listaDeVehiculosSimulacion.filter(_.vehiculo.isInstanceOf[Moto]).length
@@ -221,51 +242,79 @@ object Simulacion extends Runnable {
     val velMaximaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).max
     val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
     val longitudPromedio = (VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia).sum) / vias
+
     var origen = 0
-    def contar(rec: ArrayBuffer[Interseccion]): scala.collection.mutable.Map[Interseccion, Int] = {
-      var r = scala.collection.mutable.Map[Interseccion, Int]()
-      rec.foreach(f => {
-        if (!(r.contains(f))) {
-          r += (f -> 1)
-        } else {
-          var aux = r.get(f).get.toInt
-          r.remove(f)
-          r += (f -> (1 + aux))
-        }
-      })
-      r
-    }
     val mapPromedioOrigen = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas(0)))
 
     mapPromedioOrigen.foreach(f => {
       origen += f._2
     })
-    val PromedioOrigen = origen / (mapPromedioOrigen.size)
+    val promedioOrigen = origen / (mapPromedioOrigen.size)
 
-    println("TTTTTTTTTTTTTTTTTTTT")
-    println(s"$velMaximaVias, $velMinimaVias")
+    var destino = 0
+    val mapPromedioDestino = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas.last))
+
+    mapPromedioDestino.foreach(f => {
+      destino += f._2
+    })
+    val promedioDestino = destino / (mapPromedioDestino.size)
+
+    val sinOrigen = listaIntersecciones.length - mapPromedioOrigen.size
+    val sinDestino = listaIntersecciones.length - mapPromedioDestino.size
+    val arrayDistancias = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.recorridoCompleto.map(_.distancia).reduce(_ + _))
+    val distanciaMinima = arrayDistancias.min
+    val distanciaMaxima = arrayDistancias.max
+    val distanciaPromedio = (arrayDistancias.sum) / (arrayDistancias.length)
 
     //FIN CALCULOS PAJOY
-
+    val velocidadesVehiculos = ArrayBuffer[Double]()
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -inicio
       println("t: " + Simulacion.t)
+      val velocidades = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.vehiculo.velocidad.magnitud)
+      velocidades.foreach(f => {
+        velocidadesVehiculos += f
+      })
       println("Interseccion destino: " + vehiculoSimulacion.interseccionDestino)
       println("angulo:" + vehiculoSimulacion.vehiculo.velocidad.direccion.valor)
       println("Componente velocidad X:" + vehiculoSimulacion.vehiculo.velocidad.sentidoX * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.cos(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
       println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.sentidoY * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
+
       vehiculoSimulacion.mover(Simulacion.dt)
       println(vehiculoSimulacion.vehiculo.posicion)
-      val grafico=Grafico
+      val grafico = Grafico
       VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(grafico.actualizarVehiculo(_))
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -fin
-      
+
       Simulacion.t += Simulacion.dt
 
       //funcion de pajoy que recoje los datos desde la misma lista de [VehiculoSimulacion]
 
       Thread.sleep(tRefresh * 1000)
     }
+
+    //Pajoy
+
+    val tiempoRealidad = t
+    val tiempoSimulacion = tiempoRealidad / tRefresh
+    val velVehiMax = (velocidadesVehiculos.max) * 3.6
+    val velVehiMin = (velocidadesVehiculos.min) * 3.6
+    val velVehiProm = ((velocidadesVehiculos.sum) / (velocidadesVehiculos.length)) * 3.6
+
+    val salidaVehiculos = new SalidaVehiculos(totalVehiculos, totalCarros, totalMotos, totalBuses, totalCamiones, totalMototaxis)
+    val vehiculosEnInterseccion = new VehiculosEnInterseccion(promedioOrigen, promedioDestino, sinOrigen, sinDestino)
+    val mallaVial = new MallaVial(vias, intersecciones, viasUnSentido, viasDobleSentido, velMaximaVias, velMinimaVias, longitudPromedio, vehiculosEnInterseccion)
+    val tiempos = new Tiempos(tiempoSimulacion, tiempoRealidad)
+    val salidaVelocidades = new SalidaVelocidades(velVehiMin,velVehiMax,velVehiProm)
+    val distancias = new Distancias(distanciaMinima,distanciaMaxima, distanciaPromedio)
+    
+    val resultados = new ResultadosSimulacion(salidaVehiculos, mallaVial, tiempos, salidaVelocidades, distancias)
+    val salida = new Salida(resultados)
+    jsonAdmin.escribirArchivo("C:\\Users\\Acer\\Documents\\documentos\\semestre 5\\Scala\\Proyecto1\\medalloCity\\src\\resultados.json", salida)
+    
+    //println(s"""$vias, $intersecciones, $viasUnSentido, $viasDobleSentido, $velMaximaVias, $velMinimaVias, $longitudPromedio, $PromedioOrigen, $PromedioDestino, $sinOrigen, $sinDestino,
+    //$tiempoRealidad, $tiempoSimulacion, $velVehiMax, $velVehiMin, $velVehiProm""")
+    //finPajoy
     // Postpruebas visuales que deben ser borradas-inicio
     println("Intersecciones: " + dequeInterseccion)
     println("Vias: " + dequeVias)
