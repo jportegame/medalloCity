@@ -249,7 +249,7 @@ object Simulacion extends Runnable {
     mapPromedioOrigen.foreach(f => {
       origen += f._2
     })
-    val promedioOrigen = origen / (mapPromedioOrigen.size)
+    val promedioOrigen = totalVehiculos.toDouble / (mapPromedioOrigen.size.toDouble)//Revisar
 
     var destino = 0
     val mapPromedioDestino = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas.last))
@@ -257,7 +257,7 @@ object Simulacion extends Runnable {
     mapPromedioDestino.foreach(f => {
       destino += f._2
     })
-    val promedioDestino = destino / (mapPromedioDestino.size)
+    val promedioDestino = totalVehiculos.toDouble / (mapPromedioDestino.size.toDouble)//Revisar
 
     val sinOrigen = listaIntersecciones.length - mapPromedioOrigen.size
     val sinDestino = listaIntersecciones.length - mapPromedioDestino.size
@@ -265,7 +265,9 @@ object Simulacion extends Runnable {
     val distanciaMinima = arrayDistancias.min
     val distanciaMaxima = arrayDistancias.max
     val distanciaPromedio = (arrayDistancias.sum) / (arrayDistancias.length)
-
+    println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    println((mapPromedioOrigen.size))
+    println((mapPromedioDestino.size))
     //FIN CALCULOS PAJOY
     val velocidadesVehiculos = ArrayBuffer[Double]()
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
@@ -306,14 +308,14 @@ object Simulacion extends Runnable {
     //Pajoy
 
     val tiempoRealidad = t
-    val tiempoSimulacion = tiempoRealidad / tRefresh
+    val tiempoSimulacion = tiempoRealidad / tRefresh.toDouble
     val velVehiMax = (velocidadesVehiculos.max) * 3.6
     val velVehiMin = (velocidadesVehiculos.min) * 3.6
     val velVehiProm = ((velocidadesVehiculos.sum) / (velocidadesVehiculos.length)) * 3.6
 
     val salidaVehiculos = new SalidaVehiculos(totalVehiculos, totalCarros, totalMotos, totalBuses, totalCamiones, totalMototaxis)
     val vehiculosEnInterseccion = new VehiculosEnInterseccion(promedioOrigen, promedioDestino, sinOrigen, sinDestino)
-    val mallaVial = new MallaVial(vias, intersecciones, viasUnSentido, viasDobleSentido, velMaximaVias, velMinimaVias, longitudPromedio, vehiculosEnInterseccion)
+    val mallaVial = new MallaVial(vias, intersecciones, viasUnSentido, viasDobleSentido, velMinimaVias, velMaximaVias, longitudPromedio, vehiculosEnInterseccion)
     val tiempos = new Tiempos(tiempoSimulacion, tiempoRealidad)
     val salidaVelocidades = new SalidaVelocidades(velVehiMin,velVehiMax,velVehiProm)
     val distancias = new Distancias(distanciaMinima,distanciaMaxima, distanciaPromedio)
