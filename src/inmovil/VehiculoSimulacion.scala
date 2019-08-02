@@ -23,7 +23,7 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
       vehiculo.avance(dt)
       val xViaFin = interseccionDestino.x
       val yViaFin = interseccionDestino.y
-      val margenError = vehiculo.velocidad.magnitud + 5
+      val margenError = (vehiculo.velocidad.magnitud*dt) + 5
 
       if (vehiculo.posicion.x > xViaFin - margenError && vehiculo.posicion.x < xViaFin + margenError && vehiculo.posicion.y > yViaFin - margenError && vehiculo.posicion.y < yViaFin + margenError) {
         vehiculo.posicion.x = xViaFin
@@ -68,23 +68,13 @@ object VehiculoSimulacion {
     val viasRecorrido = VehiculoSimulacion.toQueue(viasRecorridoCompleto)
     val viaInicial = viasRecorrido.head
     var magnitudVelocidadAleatoria = (r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad
-    println("Velocidad incial 1:" + magnitudVelocidadAleatoria) //Borrar
     if (magnitudVelocidadAleatoria > viaInicial.velMaxima) {
       magnitudVelocidadAleatoria = viaInicial.velMaxima
     }
-    println("Velocidad incial 2:" + magnitudVelocidadAleatoria) //Borrar
     magnitudVelocidadAleatoria = Velocidad.conversorKmHorAMetroSeg(magnitudVelocidadAleatoria)
-    println("Velocidad incial 3: " + magnitudVelocidadAleatoria) //Borrar
-
-    println("Origen conceptual:" + origen) //Borrar
-    println("Destino conceputal:" + destino) //Borrar
-    println("Intersecciones: " + interseccionesRecorrido) //Borrar
-    println("Vias: " + viasRecorrido) //Borrar
-
     interseccionesRecorrido.dequeue()
     val interseccionInicial = interseccionesRecorrido.head
     val puntoOrigen = new Punto(origen.x, origen.y)
-
     val vehiculoDeSimulacion = new VehiculoSimulacion(Vehiculo(puntoOrigen, Velocidad(magnitudVelocidadAleatoria)(Angulo(0))), viasRecorrido, interseccionesRecorrido,viasRecorridoCompleto,interseccionesRecorridoCompleto)
     vehiculoDeSimulacion.vehiculo.velocidad.anguloYSentidoEntreDosPuntos(origen, interseccionInicial)
     val grafico=Grafico
