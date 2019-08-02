@@ -8,7 +8,8 @@ import EntradaSimulacion._
 import SalidaSimulacion._
 object Simulacion extends Runnable {
   val jsonAdmin = new Json[Salida]
-  //val parametros = jsonAdmin.leerDatosIniciales("D:\\INGENIERIA DE SISTEMAS\\PROLOG\\Trabajo MEDALLOCITY\\medalloCity\\src\\parametros.json")
+  val ruta = System.getProperty("user.dir")+"\\src\\"
+  val parametros = jsonAdmin.leerDatosIniciales(ruta+"parametros.json")
   var running = false
   val grafo = GrafoVias
   var t: Double = 0
@@ -322,7 +323,7 @@ object Simulacion extends Runnable {
     
     val resultados = new ResultadosSimulacion(salidaVehiculos, mallaVial, tiempos, salidaVelocidades, distancias)
     val salida = new Salida(resultados)
-    jsonAdmin.escribirArchivo("C:\\Users\\Acer\\Documents\\documentos\\semestre 5\\Scala\\Proyecto1\\medalloCity\\src\\resultados.json", salida)
+    jsonAdmin.escribirArchivo(ruta+"resultados.json", salida)
     
     //println(s"""$vias, $intersecciones, $viasUnSentido, $viasDobleSentido, $velMaximaVias, $velMinimaVias, $longitudPromedio, $PromedioOrigen, $PromedioDestino, $sinOrigen, $sinDestino,
     //$tiempoRealidad, $tiempoSimulacion, $velVehiMax, $velVehiMin, $velVehiProm""")
