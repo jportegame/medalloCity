@@ -47,6 +47,7 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
 object VehiculoSimulacion {
 
   val listaDeVehiculosSimulacion = new ArrayBuffer[VehiculoSimulacion]
+  val listaDeVehiculosSimulacionDetenidos=new ArrayBuffer[VehiculoSimulacion]
 
   def apply(): VehiculoSimulacion = {
     val r = new scala.util.Random

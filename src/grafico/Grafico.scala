@@ -22,6 +22,7 @@ import org.jfree.data.xy.XYSeriesCollection
 import org.jfree.chart.ChartFrame
 import org.jfree.chart.axis.ValueAxis
 import org.jfree.chart.annotations.XYTextAnnotation
+import java.awt.event.KeyListener
 
 import java.util.Random
 
@@ -32,10 +33,11 @@ import java.awt.Polygon
 
 object Grafico{
   
-  val coloresIntersecciones:Map[Interseccion, Color]=Map()
+  val coloresIntersecciones:Map[Interseccion, String]=Map()
   val dataset: XYSeriesCollection = new XYSeriesCollection();
   val renderer: XYLineAndShapeRenderer = new XYLineAndShapeRenderer()
   var plot: XYPlot = null
+  var ventana: ChartFrame = null;
   
   var punto1: XYSeries = new XYSeries("1")
   punto1.add(0, 0)
@@ -74,10 +76,11 @@ object Grafico{
   	this.plot.setRenderer(this.renderer)
   	
 
-  	val ventana: ChartFrame = new ChartFrame("vehTraffic", xyScatterChart);
-  	ventana.setVisible(true);
-  	ventana.setSize(1300, 700);
-  	ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  	this.ventana = new ChartFrame("vehTraffic", xyScatterChart)
+  	ventana.setVisible(true)
+  	ventana.setSize(1300, 700)
+  	ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+  	ventana.addKeyListener(KeyListen)
   }
   
   def cargarMapa(vias:ArrayBuffer[Via]){
@@ -90,16 +93,22 @@ object Grafico{
     }
   }
   
+  def borrarVehiculos(vehiculosSimulacion: ArrayBuffer[VehiculoSimulacion]) = {
+    vehiculosSimulacion.foreach(vehiculoSimulacion => {
+      dataset.removeSeries(dataset.getSeriesIndex(vehiculoSimulacion.vehiculo.placa))
+    })
+  }
+  
   def cargarIntersecciones(plot:XYPlot){
     val random = new Random()
     val intersecciones:ArrayBuffer[Interseccion]=GrafoVias.listaDeNodos
     for(interseccion<-intersecciones){
-      val color=Color.decode(randomHex())
-      this.renderer.setSeriesPaint(this.dataset.getSeriesCount,color)
+      val colorHex=randomHex()
+      this.renderer.setSeriesPaint(this.dataset.getSeriesCount,Color.decode(colorHex))
       val label: XYTextAnnotation = new XYTextAnnotation(interseccion.nombre,interseccion.xi, interseccion.yi+(350)*((random.nextFloat()*2).round-1))
-    	label.setPaint(color)
+    	label.setPaint(Color.decode(colorHex))
     	plot.addAnnotation(label)
-    	this.coloresIntersecciones+=(interseccion->color)
+    	this.coloresIntersecciones+=(interseccion->colorHex)
     }
   }
   
@@ -107,40 +116,37 @@ object Grafico{
   def cargarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
-    println(vehiculo.placa)
     val vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
     vehiculoGrafico.add(punto.x, punto.y)
     this.dataset.addSeries(vehiculoGrafico)
     vehiculo match{
       case vehiculo:Bus=>{
         this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-3,3,5,0,-5),Array(-6,-6,0,4,0),5))
-        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,Color.decode(this.coloresIntersecciones(vehiculoSimulacion.interseccionesCompletas.last)))
       }
       case vehiculo:Camion=>{
         this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Rectangle(-2,-4,4,10))
-        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,Color.decode(this.coloresIntersecciones(vehiculoSimulacion.interseccionesCompletas.last)))
       }
       case vehiculo:Carro=>{
         this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Ellipse2D.Double(-4,-4,8,10))
-        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,Color.decode(this.coloresIntersecciones(vehiculoSimulacion.interseccionesCompletas.last)))
       }
       case vehiculo:Moto=>{
         this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-4, 0, +4, 0),Array(4, 2, 4, -4),4))
-        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,Color.decode(this.coloresIntersecciones(vehiculoSimulacion.interseccionesCompletas.last)))
       }
       case vehiculo:MotoTaxi=>{
         this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-5,0,5),Array(-5,5,-5),3))
-        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,Color.decode(this.coloresIntersecciones(vehiculoSimulacion.interseccionesCompletas.last)))
       }
     }
     
-    println(this.dataset.getSeriesCount)
   }
   
   def actualizarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
-    println(vehiculo.placa)
     val vehiculoGrafico: XYSeries = this.dataset.getSeries(vehiculo.placa)
     vehiculoGrafico.clear()
     vehiculoGrafico.add(punto.x, punto.y)

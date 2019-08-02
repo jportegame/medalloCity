@@ -8,8 +8,8 @@ import EntradaSimulacion._
 import SalidaSimulacion._
 object Simulacion extends Runnable {
   val jsonAdmin = new Json[Salida]
-  val ruta = System.getProperty("user.dir")+"\\src\\"
-  val parametros = jsonAdmin.leerDatosIniciales(ruta+"parametros.json")
+  val ruta = System.getProperty("user.dir") + "\\src\\"
+  val parametros = jsonAdmin.leerDatosIniciales(ruta + "parametros.json")
   var running = false
   val grafo = GrafoVias
   var t: Double = 0
@@ -22,8 +22,8 @@ object Simulacion extends Runnable {
   val totalVehiculos = (((new scala.util.Random).nextDouble() * (Simulacion.maxVehiculos - Simulacion.minVehiculos)) + Simulacion.minVehiculos).toInt
 
   var listaVias = ArrayBuffer.empty[Via]
-  var hilo:Thread = _//new Thread(Simulacion)
-  var listaIntersecciones = ArrayBuffer.empty[Interseccion]
+  var hilo: Thread = _ //new Thread(Simulacion)
+
   def cargar() {
 
     val niquia = new Interseccion(300, 12000, "Niquia")
@@ -69,11 +69,6 @@ object Simulacion extends Runnable {
     val _65_80 = new Interseccion(19500, 10500, "65 con 30")
     val gu_37S = new Interseccion(21000, 12000, "Guay con 37S")
 
-    val intersect = ArrayBuffer(niquia, lauraAuto, lauraReg, ptoCero, mino, villa, ig65, robledo, colReg, colFerr, col65, col80, juanOr,
-      maca, expo, reg30, monte, agua, viva, mayor, ferrCol, ferrJuan, sanDiego, premium, pp, santafe, pqEnv, juan65, juan80, _33_65,
-      bule, gema, _30_65, _30_70, _30_80, bol65, gu10, terminal, gu30, gu80, _65_80, gu_37S)
-
-    listaIntersecciones = intersect
 
     val vias = ArrayBuffer(
       new Via(niquia, lauraAuto, 80, TipoVia("Carrera"), Sentido.dobleVia, "64C", "Auto Norte"),
@@ -152,11 +147,10 @@ object Simulacion extends Runnable {
     println(VehiculoSimulacion.listaDeVehiculosSimulacion.length)
     val grafico = Grafico
     grafico.iniciarGrafico(vias)
-    Simulacion.run()
 
   }
   def start() {
-    if (running) {
+    if (Simulacion.running) {
       Simulacion.stop()
     }
 
@@ -165,13 +159,14 @@ object Simulacion extends Runnable {
   }
 
   def stop() {
-    running = false
+    Simulacion.running = false
     hilo.join()
     Vehiculo.setPlacas.clear()
+    
+    Grafico.borrarVehiculos(VehiculoSimulacion.listaDeVehiculosSimulacion++VehiculoSimulacion.listaDeVehiculosSimulacionDetenidos)
     VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
+    VehiculoSimulacion.listaDeVehiculosSimulacionDetenidos.clear()
     Simulacion.t = 0
-    //Grafico.reiniciarVehiculos()
-
   }
   def run() {
     for (i <- 0 until Simulacion.totalVehiculos) {
@@ -209,68 +204,61 @@ object Simulacion extends Runnable {
     val velMinimaVias = VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.velMaxima).min
     val longitudPromedio = (VehiculoSimulacion.listaDeVehiculosSimulacion.flatMap(_.recorridoCompleto).distinct.map(_.distancia).sum) / vias
 
-    
     val mapPromedioOrigen = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas(0)))
 
-    
-    val promedioOrigen = totalVehiculos.toDouble / (mapPromedioOrigen.size.toDouble)//Revisar
+    val promedioOrigen = totalVehiculos.toDouble / (mapPromedioOrigen.size.toDouble) //Revisar
 
     val mapPromedioDestino = contar(VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.interseccionesCompletas.last))
 
-    val promedioDestino = totalVehiculos.toDouble / (mapPromedioDestino.size.toDouble)//Revisar
+    val promedioDestino = totalVehiculos.toDouble / (mapPromedioDestino.size.toDouble) //Revisar
 
-    val sinOrigen = listaIntersecciones.length - mapPromedioOrigen.size
-    val sinDestino = listaIntersecciones.length - mapPromedioDestino.size
+    val sinOrigen = GrafoVias.listaDeNodos.length - mapPromedioOrigen.size
+    val sinDestino = GrafoVias.listaDeNodos.length - mapPromedioDestino.size
     val arrayDistancias = VehiculoSimulacion.listaDeVehiculosSimulacion.map(_.recorridoCompleto.map(_.distancia).reduce(_ + _))
     val distanciaMinima = arrayDistancias.min
     val distanciaMaxima = arrayDistancias.max
     val distanciaPromedio = (arrayDistancias.sum) / (arrayDistancias.length)
-    
+
     val velocidadesVehiculos = ArrayBuffer[Double]()
-    VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(x=>{ velocidadesVehiculos += x.vehiculo.velocidad.magnitud})
+    VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(x => { velocidadesVehiculos += x.vehiculo.velocidad.magnitud })
     val velVehiMax = Velocidad.conversorMetroSegAKmHor(velocidadesVehiculos.max)
     val velVehiMin = Velocidad.conversorMetroSegAKmHor(velocidadesVehiculos.min)
-    val velVehiProm =  Velocidad.conversorMetroSegAKmHor((velocidadesVehiculos.sum) / (velocidadesVehiculos.length)) 
+    val velVehiProm = Velocidad.conversorMetroSegAKmHor((velocidadesVehiculos.sum) / (velocidadesVehiculos.length))
 
-    //FIN CALCULOS INICIALES 
-    
-    
-    
+    //FIN CALCULOS INICIALES
 
-    while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
-      val listaVehiculosLlegaron = new ArrayBuffer[VehiculoSimulacion]
+    while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty && Simulacion.running) {
       val grafico = Grafico
-      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(vehiculo=>{
+      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(vehiculo => {
         vehiculo.mover(Simulacion.dt)
         grafico.actualizarVehiculo(vehiculo)
-        if(vehiculo.vehiculo.detenido){
-          listaVehiculosLlegaron+=vehiculo
+        if (vehiculo.vehiculo.detenido) {
+          VehiculoSimulacion.listaDeVehiculosSimulacionDetenidos.+=(vehiculo)
         }
       })
-      listaVehiculosLlegaron.foreach(vehiculo=>vehiculo.pararVehiculo(vehiculo))
+      VehiculoSimulacion.listaDeVehiculosSimulacionDetenidos.foreach(vehiculo => vehiculo.pararVehiculo(vehiculo))
       Simulacion.t += Simulacion.dt
       Thread.sleep(tRefresh)
     }
 
     //Calculos Finales
+    if (Simulacion.running) {
+      val tiempoRealidad = t
+      val tiempoSimulacion: Double = tiempoRealidad * (tRefresh.toDouble / 1000)
 
-    val tiempoRealidad = t
-    val tiempoSimulacion:Double = tiempoRealidad * (tRefresh.toDouble/1000)
+      val salidaVehiculos = new SalidaVehiculos(totalVehiculos, totalCarros, totalMotos, totalBuses, totalCamiones, totalMototaxis)
+      val vehiculosEnInterseccion = new VehiculosEnInterseccion(promedioOrigen, promedioDestino, sinOrigen, sinDestino)
+      val mallaVial = new MallaVial(vias, intersecciones, viasUnSentido, viasDobleSentido, velMinimaVias, velMaximaVias, longitudPromedio, vehiculosEnInterseccion)
+      val tiempos = new Tiempos(tiempoSimulacion, tiempoRealidad)
+      val salidaVelocidades = new SalidaVelocidades(velVehiMin, velVehiMax, velVehiProm)
+      val distancias = new Distancias(distanciaMinima, distanciaMaxima, distanciaPromedio)
 
+      val resultados = new ResultadosSimulacion(salidaVehiculos, mallaVial, tiempos, salidaVelocidades, distancias)
+      val salida = new Salida(resultados)
+      jsonAdmin.escribirArchivo(ruta + "resultados.json", salida)
+    }
 
-    val salidaVehiculos = new SalidaVehiculos(totalVehiculos, totalCarros, totalMotos, totalBuses, totalCamiones, totalMototaxis)
-    val vehiculosEnInterseccion = new VehiculosEnInterseccion(promedioOrigen, promedioDestino, sinOrigen, sinDestino)
-    val mallaVial = new MallaVial(vias, intersecciones, viasUnSentido, viasDobleSentido, velMinimaVias, velMaximaVias, longitudPromedio, vehiculosEnInterseccion)
-    val tiempos = new Tiempos(tiempoSimulacion, tiempoRealidad)
-    val salidaVelocidades = new SalidaVelocidades(velVehiMin,velVehiMax,velVehiProm)
-    val distancias = new Distancias(distanciaMinima,distanciaMaxima, distanciaPromedio)
-    
-    val resultados = new ResultadosSimulacion(salidaVehiculos, mallaVial, tiempos, salidaVelocidades, distancias)
-    val salida = new Salida(resultados)
-    jsonAdmin.escribirArchivo(ruta+"resultados.json", salida)
-    
     //Fin Calculos Finales
-
 
   }
 
