@@ -39,10 +39,12 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
           vehiculo.detenido = true
         }
       }
-    }else{
-       VehiculoSimulacion.listaDeVehiculosSimulacion.-=(this)
     }
   }
+  def pararVehiculo(vehiculo:VehiculoSimulacion){
+       VehiculoSimulacion.listaDeVehiculosSimulacion.-=(vehiculo)
+  }
+  
 }
 
 object VehiculoSimulacion {

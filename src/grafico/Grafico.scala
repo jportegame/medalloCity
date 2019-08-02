@@ -3,6 +3,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
 import ciudad._
 import inmovil._
+import movil._
 //Libreria para frames
 import javax.swing.JFrame
 //Libreria para lineas
@@ -30,10 +31,15 @@ import java.awt.Rectangle
 import java.awt.Polygon
 
 object Grafico{
+  
   val coloresIntersecciones:Map[Interseccion, Color]=Map()
   val dataset: XYSeriesCollection = new XYSeriesCollection();
   val renderer: XYLineAndShapeRenderer = new XYLineAndShapeRenderer()
   var plot: XYPlot = null
+  
+  var punto1: XYSeries = new XYSeries("1")
+  punto1.add(0, 0)
+  dataset.addSeries(punto1)
   
   def iniciarGrafico(vias:ArrayBuffer[Via]){
   	
@@ -59,9 +65,9 @@ object Grafico{
   	
 
   	val range:  ValueAxis = plot.getRangeAxis()
-    range.setVisible(true)
+    range.setVisible(false)
     val domain: ValueAxis = plot.getDomainAxis()
-    domain.setVisible(true)
+    domain.setVisible(false)
     
     this.cargarIntersecciones(plot)
 
@@ -80,7 +86,7 @@ object Grafico{
     	nuevaVia.add(via.origen.xi, via.origen.yi)
     	nuevaVia.add(via.fin.xi, via.fin.yi)
       this.dataset.addSeries(nuevaVia)
-      renderer.setSeriesShapesVisible(dataset.getSeriesCount, false)
+      renderer.setSeriesShapesVisible(dataset.getSeriesCount-1, false)
     }
   }
   
@@ -97,6 +103,7 @@ object Grafico{
     }
   }
   
+  
   def cargarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
@@ -104,13 +111,36 @@ object Grafico{
     val vehiculoGrafico: XYSeries = new XYSeries(vehiculo.placa)
     vehiculoGrafico.add(punto.x, punto.y)
     this.dataset.addSeries(vehiculoGrafico)
-    this.renderer.setSeriesShape(this.dataset.getSeriesCount, new Rectangle(-4,-4,6,6))
-    this.renderer.setSeriesPaint(this.dataset.getSeriesCount,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+    vehiculo match{
+      case vehiculo:Bus=>{
+        this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-3,3,5,0,-5),Array(-6,-6,0,4,0),5))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+      }
+      case vehiculo:Camion=>{
+        this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Rectangle(-2,-4,4,10))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+      }
+      case vehiculo:Carro=>{
+        this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Ellipse2D.Double(-4,-4,8,10))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+      }
+      case vehiculo:Moto=>{
+        this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-4, 0, +4, 0),Array(4, 2, 4, -4),4))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+      }
+      case vehiculo:MotoTaxi=>{
+        this.renderer.setSeriesShape(this.dataset.getSeriesCount-1, new Polygon(Array(-5,0,5),Array(-5,5,-5),3))
+        this.renderer.setSeriesPaint(this.dataset.getSeriesCount-1,this.coloresIntersecciones(vehiculoSimulacion.interseccionDestino))
+      }
+    }
+    
+    println(this.dataset.getSeriesCount)
   }
   
   def actualizarVehiculo(vehiculoSimulacion:VehiculoSimulacion){
     val vehiculo=vehiculoSimulacion.vehiculo
     val punto=vehiculo.posicion
+    println(vehiculo.placa)
     val vehiculoGrafico: XYSeries = this.dataset.getSeries(vehiculo.placa)
     vehiculoGrafico.clear()
     vehiculoGrafico.add(punto.x, punto.y)

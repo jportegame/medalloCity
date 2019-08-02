@@ -18,7 +18,7 @@ object Simulacion extends Runnable {
   val maxVehiculos = 100
   val minVelocidad: Double = 40
   val maxVelocidad: Double = 80
-  val totalVehiculos = 1 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
+  val totalVehiculos = 15 //Tiene que ser randomizada cuando funcine de verdad el proyecto y tiene que estar entre(minVehiculos,maxVehiculos)
 
   var listaVias = ArrayBuffer.empty[Via]
   val hilo = new Thread(Simulacion)
@@ -279,11 +279,21 @@ object Simulacion extends Runnable {
       println("angulo:" + vehiculoSimulacion.vehiculo.velocidad.direccion.valor)
       println("Componente velocidad X:" + vehiculoSimulacion.vehiculo.velocidad.sentidoX * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.cos(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
       println("Componente velocidad Y:" + vehiculoSimulacion.vehiculo.velocidad.sentidoY * vehiculoSimulacion.vehiculo.velocidad.magnitud * Math.sin(vehiculoSimulacion.vehiculo.velocidad.direccion.valor.toRadians))
-
-      vehiculoSimulacion.mover(Simulacion.dt)
+      
+      val listaVehiculosLlegaron = new ArrayBuffer[VehiculoSimulacion]
+      
       println(vehiculoSimulacion.vehiculo.posicion)
       val grafico = Grafico
-      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(grafico.actualizarVehiculo(_))
+      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(vehiculo=>{
+        vehiculo.mover(Simulacion.dt)
+        grafico.actualizarVehiculo(vehiculo)
+        if(vehiculo.vehiculo.detenido){
+          listaVehiculosLlegaron+=vehiculo
+        }
+      })
+      
+      listaVehiculosLlegaron.foreach(vehiculo=>vehiculo.pararVehiculo(vehiculo))
+ 
       //Pruebas visuales hechas por juanes deben ser remplazadas por la funcion de pablo donde recibe una lista de [VehiculoSimulacion] -fin
 
       Simulacion.t += Simulacion.dt
