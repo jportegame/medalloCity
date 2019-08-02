@@ -31,9 +31,6 @@ class VehiculoSimulacion(val vehiculo: Vehiculo, val recorrido: Queue[Via], val 
         if (!interseccionesRecorrido.isEmpty) {
           this.viaActual = recorrido.dequeue()
           this.interseccionDestino = interseccionesRecorrido.dequeue()
-          if (vehiculo.velocidad.magnitud > viaActual.velMaxima) {
-            vehiculo.velocidad.magnitud = viaActual.velMaxima
-          }
           vehiculo.velocidad.anguloYSentidoEntreDosPuntos(vehiculo.posicion, this.interseccionDestino)
         } else {
           vehiculo.detenido = true
@@ -67,11 +64,7 @@ object VehiculoSimulacion {
     val interseccionesRecorrido = VehiculoSimulacion.toQueue(interseccionesRecorridoCompleto)
     val viasRecorrido = VehiculoSimulacion.toQueue(viasRecorridoCompleto)
     val viaInicial = viasRecorrido.head
-    var magnitudVelocidadAleatoria = (r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad
-    if (magnitudVelocidadAleatoria > viaInicial.velMaxima) {
-      magnitudVelocidadAleatoria = viaInicial.velMaxima
-    }
-    magnitudVelocidadAleatoria = Velocidad.conversorKmHorAMetroSeg(magnitudVelocidadAleatoria)
+    val magnitudVelocidadAleatoria = Velocidad.conversorKmHorAMetroSeg((r.nextDouble() * (Simulacion.maxVelocidad - Simulacion.minVelocidad)) + Simulacion.minVelocidad)
     interseccionesRecorrido.dequeue()
     val interseccionInicial = interseccionesRecorrido.head
     val puntoOrigen = new Punto(origen.x, origen.y)

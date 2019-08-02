@@ -225,14 +225,19 @@ object Simulacion extends Runnable {
     val distanciaMinima = arrayDistancias.min
     val distanciaMaxima = arrayDistancias.max
     val distanciaPromedio = (arrayDistancias.sum) / (arrayDistancias.length)
-
-    //FIN CALCULOS PAJOY
-    
-    
     
     val velocidadesVehiculos = ArrayBuffer[Double]()
+    VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(x=>{ velocidadesVehiculos += x.vehiculo.velocidad.magnitud})
+    val velVehiMax = Velocidad.conversorMetroSegAKmHor(velocidadesVehiculos.max)
+    val velVehiMin = Velocidad.conversorMetroSegAKmHor(velocidadesVehiculos.min)
+    val velVehiProm =  Velocidad.conversorMetroSegAKmHor((velocidadesVehiculos.sum) / (velocidadesVehiculos.length)) 
+
+    //FIN CALCULOS INICIALES 
+    
+    
+    
+
     while (!VehiculoSimulacion.listaDeVehiculosSimulacion.isEmpty) {
-      VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(x=>{ velocidadesVehiculos += x.vehiculo.velocidad.magnitud})
       val listaVehiculosLlegaron = new ArrayBuffer[VehiculoSimulacion]
       val grafico = Grafico
       VehiculoSimulacion.listaDeVehiculosSimulacion.foreach(vehiculo=>{
@@ -251,9 +256,7 @@ object Simulacion extends Runnable {
 
     val tiempoRealidad = t
     val tiempoSimulacion:Double = tiempoRealidad * (tRefresh.toDouble/1000)
-    val velVehiMax = (velocidadesVehiculos.max) * 3.6
-    val velVehiMin = (velocidadesVehiculos.min) * 3.6
-    val velVehiProm = ((velocidadesVehiculos.sum) / (velocidadesVehiculos.length)) * 3.6
+
 
     val salidaVehiculos = new SalidaVehiculos(totalVehiculos, totalCarros, totalMotos, totalBuses, totalCamiones, totalMototaxis)
     val vehiculosEnInterseccion = new VehiculosEnInterseccion(promedioOrigen, promedioDestino, sinOrigen, sinDestino)
