@@ -22,7 +22,7 @@ object Simulacion extends Runnable {
   val totalVehiculos = (((new scala.util.Random).nextDouble() * (Simulacion.maxVehiculos - Simulacion.minVehiculos)) + Simulacion.minVehiculos).toInt
 
   var listaVias = ArrayBuffer.empty[Via]
-  val hilo = new Thread(Simulacion)
+  var hilo:Thread = _//new Thread(Simulacion)
   var listaIntersecciones = ArrayBuffer.empty[Interseccion]
   def cargar() {
 
@@ -160,24 +160,23 @@ object Simulacion extends Runnable {
       Simulacion.stop()
     }
 
-    hilo.start
+    hilo = new Thread(Simulacion)
+    hilo.start()
   }
 
   def stop() {
+    running = false
+    hilo.join()
     Vehiculo.setPlacas.clear()
     VehiculoSimulacion.listaDeVehiculosSimulacion.clear()
+    Simulacion.t = 0
     //Grafico.reiniciarVehiculos()
-    running = false
-    hilo.interrupt()
+
   }
   def run() {
-
     for (i <- 0 until Simulacion.totalVehiculos) {
       VehiculoSimulacion.apply()
     }
-
-
-
     Simulacion.running = true
     //CALCULOS ININCIALES
 
